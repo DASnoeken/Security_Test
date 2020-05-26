@@ -1,0 +1,71 @@
+
+<html>
+    <style>
+        .jumbotron{
+            background-color: rgb(204, 204, 204);
+            color: rgb(0,0,0);
+        }
+        .column {
+            float: left;
+            width: 33.33%;
+        }
+
+/* Clear floats after the columns */
+        .row:after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+    </style>
+    <head>
+        <title>Coach Scherm</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+      </head>
+      <body>
+    <div class="jumbotron text-center">
+        <div class="container">
+            <div class="row">
+                <div class="column"><img src="https://st2.depositphotos.com/4165281/8009/v/450/depositphotos_80090842-stock-illustration-gym-logo-in-vintage-style.jpg" width="50%"></div>
+                    <div class="column">
+                        <h1>
+                            Coach
+                        </h1>
+                        <p>
+                            Jij bent de coach!<br>Help de sporters!
+                        </p>
+                    </div>
+                    <div class="column" style="font-size: large;">
+                        <de-coach></de-coach>
+                    </div>
+                </div> 
+            </div>
+        </div> 
+
+
+<ul class="nav nav-pills justify-content-center">
+    <li class="nav-item">
+      <button type="button" class="btn btn-outline-primary" (click) = "showScherm(1)">Planning maken</button>
+    </li>
+    <li class="nav-item">
+        <button type="button" class="btn btn-outline-primary" (click) = "showScherm(2)">Oefening maken</button>
+    </li>
+    <li class="nav-item">
+        <button type="button" class="btn btn-outline-primary" (click) = "showScherm(3)">Voortgangen bekijken</button>
+    </li>
+</ul>
+<div id="planning" class = "text-center" hidden >
+    <de-planning></de-planning>
+</div>
+<div id="oefening" class = "text-center" hidden >
+    <de-oefening></de-oefening>
+</div>
+<div id="voortgang" class = "text-center" hidden >
+    <de-voortgang></de-voortgang>
+</div>
+</body>
+</html>
+

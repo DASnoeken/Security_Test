@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+		integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+</head>
+
+<script>
+	var sporterID = new URL(window.location.href).searchParams.get("inlogID");
+
+	function veranderIets() {
+		document.getElementById("displayScherm").innerHTML = "<p>iets</p>";
+	}
+	function geefOefeningen() {
+		var xhr = new XMLHttpRequest();
+		xhr.onreadystatechange = function () {
+			if (this.readyState == 4) {
+				var rijtjeOefeningen = JSON.parse(this.responseText);
+				var eindtekst = "";
+				for (var x = 0; x < rijtjeOefeningen.length; x++) {
+					eindtekst += "<a class=\"dropdown-item\" onclick = \"showOefening(" + rijtjeOefeningen[x].id
+						+ ")\">" + rijtjeOefeningen[x].naam + "</a>";
+				}
+				document.getElementById("oefeningen").innerHTML = eindtekst;
+			}
+		};
+		xhr.open("GET", "http://localhost:8082/allOefeningen", true);
+		xhr.send();
+	}
+	
+	function showOefening(i){
+        i--;
+        var xhr = new XMLHttpRequest();
+		xhr.onreadystatechange = function () {
+			if (this.readyState == 4) {
+				var rijtjeOefeningen = JSON.parse(this.responseText);
+                console.log(rijtjeOefeningen);
+				var naam = "<h1>" + rijtjeOefeningen[i].naam + "</h1>";
+				var breakie = "<br>";
+				var uitleg = "<p>" + rijtjeOefeningen[i].uitleg + "</p>";
+				document.getElementById("displayScherm").innerHTML = naam + breakie + uitleg;
+			}
+		};
+		xhr.open("GET", "http://localhost:8082/allOefeningen", true);
+		xhr.send();
+    }
+    
+
+	function mailVersturenCoach(){
+		var xhr = new XMLHttpRequest();
+		xhr.onreadystatechange = function () {
+			if (this.readyState == 4) {
+				alert("Mail is verstuurd")
+				document.getElementById("displayScherm").innerHTML = "<p>Wacht op de coach voor de planning</p>"
+			}
+		};
+		xhr.open("POST", "http://localhost:8082/stuurMail/" + sporterID, true);
+		xhr.send();
+	}
+	function showPlanning() {
+		var xhr = new XMLHttpRequest();
+		xhr.onreadystatechange = function () {
+			if (this.readyState == 4) {
+				if (this.responseText) {
+					var planning = JSON.parse(this.responseText);
+					console.log(planning);
+					var eindtekst = "<table class =\"table\">"
+						+ "<thead class =\"thead-dark\"><tr>"
+						+ "<th scope =\"col\">Tijd</th>"
+						+ "<th scope = \"col\">Oefening</th>"
+						+ "<th scope = \"col\">Aantal Reps </th>"
+						+ "<th scope = \"col\">Gewicht</th></tr></thead><tbody>";
+					for (var y = 0; y < planning.trainingen.length; y++) {
+						if (planning.trainingen[y])
+							eindtekst += "<tr>" +
+								"<td>" + planning.trainingen[y].tijd +
+								"</td><td>" + planning.trainingen[y].oefening.naam +
+								"</td><td>" + planning.trainingen[y].aantalReps +
+								"</td><td>" + planning.trainingen[y].gewicht + "</td></tr>";
+					}
+					eindtekst += "</tbody></table>";
+				} else {
+					eindtekst = "<input type=button value=\"Maak Planning\" onclick=\"mailVersturenCoach()\">"
+				}
+
+				document.getElementById("displayScherm").innerHTML = document.getElementById("planning-titel").innerHTML + eindtekst;
+
+			}
+		};
+		xhr.open("GET", "http://localhost:8082/toonPlanning/" + sporterID, true);
+		xhr.send();
+
+	}
+	function oefeningRegistreren() {
+		document.getElementById("displayScherm").innerHTML = document.getElementById("oefeningRegistratieScherm").innerHTML;
+	}
+	function verwijderModus() {
+		var checkbox = document.getElementById("checkbox");
+		if (checkbox.checked) {
+			document.getElementById("ipID").disabled = false;
+		} else {
+			document.getElementById("ipID").disabled = true;
+		}
+
+	}
+	function slaOefeningOp() {
+		var oefening = document.getElementById("ipoefening").value;
+		var oefeningtijd = document.getElementById("ipoefeningtijd").value;
+		var liftaantal = document.getElementById("ipliftaantal").value;
+		var gewicht = document.getElementById("ipgewicht").value;
+		var starttijd = document.getElementById("ipstarttijd").value;
+
+		var voortgangObject = {};
+		voortgangObject.oefeningtijd = oefeningtijd;
+		voortgangObject.liftaantal = liftaantal;
+		voortgangObject.gebruiktegewicht = gewicht;
+		voortgangObject.starttijd = starttijd;
+		var objJSON = JSON.stringify(voortgangObject);
+		var xhr = new XMLHttpRequest();
+		xhr.onreadystatechange = function () {
+			if (this.readyState == 4) {	
+				window.location.href = "frontend_sporterVragenlijst.html?inlogID="+window.sporterID+"&VoortgangID="+this.responseText;			
+			}
+		};
+		xhr.open("POST", "http://localhost:8082/vulVoortgang/" + oefening, true);
+		xhr.setRequestHeader("Content-Type", "application/json");
+		xhr.send(objJSON);
+		document.getElementById("displayScherm").innerHTML = document.getElementById("vragenlijstScherm").innerHTML;
+		openVragenlijst();
+	}
+
+	function openVragenlijst() {
+		var xhr = new XMLHttpRequest();
+		xhr.onreadystatechange = function () {
+			if (this.readyState == 4) {
+				var vraag = JSON.parse(this.responseText);
+				console.log(vraag);
+				document.getElementById("vraag").innerHTML = vraag.vragen;
+				// var allevragen = "";
+				// vragen.forEach(element => {
+				// allevragen += element + "<br>";
+				// })
+
+			}
+		}
+		xhr.open("GET", "http://localhost:8082/vulVragenlijst", true);
+		xhr.send();
+	}
+
+	function slaAntwoordOp() {
+		var xhr = new XMLHttpRequest();
+		//var idVoortgang = document.getElementById("voortgangID").value;
+		//console.log(idVoortgang);
+		var vragenlijsten = {};
+		if (document.getElementById("antwoord-goed").checked) {
+			vragenlijsten.antwoorden = "goed";
+		} else if (document.getElementById("antwoord-matig").checked) {
+			vragenlijsten.antwoorden = "matig";
+		} else {
+			vragenlijsten.antwoorden = "slecht";
+		}
+		var objJSON = JSON.stringify(vragenlijsten);
+		window.gevoel = vragenlijsten.antwoorden;
+		xhr.onreadystatechange = function () {
+			if (this.readyState == 4) {
+				console.log(objJSON);
+			}
+		};
+		xhr.open("POST", "http://localhost:8082/save/antwoord/" + window.sporterID, true);
+		xhr.setRequestHeader("Content-Type", "application/json");
+		xhr.send(objJSON);
+		//antwoordVoortgang(idVoortgang);
+	}
+
+	function antwoordVoortgang(id) {
+		var voortgangObject = {};
+		voortgangObject.id = id;
+		voortgangObject.antwoord = window.gevoel;
+		var objJSON = JSON.stringify(voortgangObject);
+		xhr = new XMLHttpRequest();
+		xhr.onreadystatechange = function () { };
+		xhr.open("POST", "http://localhost:8082/voortgangAntwoord");
+		xhr.setRequestHeader("Content-Type", "application/json");
+		xhr.send(objJSON);
+	}
+
+	function toonVoortgang() {
+		var xhr = new XMLHttpRequest();
+		xhr.onreadystatechange = function () {
+			if (this.readyState == 4) {
+				var rijtjeVoortgang = JSON.parse(this.responseText);
+				var eindtekst = "<table class =\"table\">"
+					+ "<thead class =\"thead-dark\"><tr>"
+					+ "<th scope = \"col\">ID</th>"
+					+ "<th scope = \"col\">Oefening</th>"
+					+ "<th scope = \"col\">Gewicht</th>"
+					+ "<th scope =\"col\">Starttijd</th>"
+					+ "<th scope = \"col\">Tijdsduur</th>"
+					+ "<th scope = \"col\">Aantal reps</th>"
+					+ "<th scope = \"col\">Gegeven feedback</th>"
+					+ "<th scope = \"col\">Gevoel</tr></thead><tbody>";
+				for (var x = 0; x < rijtjeVoortgang.length; x++) {
+					eindtekst += "<tr><td>" + rijtjeVoortgang[x].id +
+						"</td><td>" + rijtjeVoortgang[x].oefening.naam +
+						"</td><td>" + rijtjeVoortgang[x].gebruiktegewicht +
+						"</td><td>" + rijtjeVoortgang[x].starttijd +
+						"</td><td>" + rijtjeVoortgang[x].oefeningtijd +
+						"</td><td>" + rijtjeVoortgang[x].liftaantal +
+						"</td><td>" + rijtjeVoortgang[x].feedback +
+						"</td><td>" + rijtjeVoortgang[x].antwoorden + "</td></tr>";
+					console.log(rijtjeVoortgang[x].oefening);
+				}
+				eindtekst += "</tbody></table>";
+				document.getElementById("displayScherm").innerHTML = document.getElementById("voortgangscherm-titel").innerHTML  + eindtekst + document.getElementById("voortgangscherm").innerHTML;
+
+			}
+		};
+		xhr.open("GET", "http://localhost:8082/allVoortgang", true);
+		xhr.send();
+	}
+	function verwijderOefening() {
+		var ID = document.getElementById("ipID").value;
+		var xhr = new XMLHttpRequest();
+		xhr.onreadystatechange = function () {
+			if (this.readyState == 4) {
+				alert(ID + "is verwijderd uit de lijst");
+			}
+		};
+		xhr.open("POST", "http://localhost:8082/verwijderOefening", true);
+		xhr.setRequestHeader("Content-Type", "application/json");
+		xhr.send(ID);
+	}
+	function toonVoortgangVragenlijst() {
+		var xhr = new XMLHttpRequest();
+		xhr.onreadystatechange = function () {
+			if (this.readyState == 4) {
+				var rijtjeVoortgang = JSON.parse(this.responseText);
+				var eindtekst = "<table class =\"table\">"
+					+ "<thead class =\"thead-dark\"><tr>"
+					+ "<th scope = \"col\">ID</th>"
+					+ "<th scope = \"col\">Oefening</th>"
+					+ "<th scope = \"col\">Gewicht</th>"
+					+ "<th scope =\"col\">Starttijd</th>"
+					+ "<th scope = \"col\">Tijdsduur</th>"
+					+ "<th scope = \"col\">Aantal reps</th>"
+					+ "<th scope = \"col\">Gegeven feedback</th>"
+					+ "<th scope = \"col\">Gevoel</tr></thead><tbody>";
+				for (var x = 0; x < rijtjeVoortgang.length; x++) {
+					eindtekst += "<tr><td>" + rijtjeVoortgang[x].id +
+						"</td><td>" + rijtjeVoortgang[x].oefening.naam +
+						"</td><td>" + rijtjeVoortgang[x].gebruiktegewicht +
+						"</td><td>" + rijtjeVoortgang[x].starttijd +
+						"</td><td>" + rijtjeVoortgang[x].oefeningtijd +
+						"</td><td>" + rijtjeVoortgang[x].liftaantal +
+						"</td><td>" + rijtjeVoortgang[x].feedback +
+						"</td><td>" + rijtjeVoortgang[x].antwoorden + "</td></tr>";
+					console.log(rijtjeVoortgang[x].oefening);
+				}
+				eindtekst += "</tbody></table>";
+				document.getElementById("tabelDiv").innerHTML = eindtekst;
+				document.getElementById("tabelDiv").hidden = false;
+			}
+		};
+		xhr.open("GET", "http://localhost:8082/allVoortgang", true);
+		xhr.send();
+	}
+	function Logout(){
+		window.location.href = "frontend_startScherm.html";
+	}
+</script>
+
+<body>
+	<ul class="nav nav-pills justify-content-center">
+		<li class="nav-item">
+			<button type="button" class="btn btn-outline-primary" onclick="showPlanning()">Planning</a>
+		</li>
+		<li class="nav-item dropdown">
+			<button type="button" class="btn btn-outline-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true"
+				aria-expanded="false">Oefeningen</a>
+			<div class="dropdown-menu">
+				<div id="oefeningen">
+					<script>geefOefeningen();</script>
+				</div>
+			</div>
+		</li>
+		<li class="nav-item">
+			<button type="button" class="btn btn-outline-primary" onclick="oefeningRegistreren()">Oefening registreren</a>
+			<button type="button" class="btn btn-outline-primary" onclick="toonVoortgang()">Voortgang</button>
+			<button type="button" class="btn btn-outline-primary" onclick="Logout()">Uitloggen</button>
+		</li>
+	</ul>
+	<! -- DIT IS HET DISPLAY SCHERM -->
+		<div id="displayScherm">
+			<h1 class="jumbotron text-center">WELKOM SPORTER </h1>
+		</div>
+		<! -- DIT IS HET PLANNING SCHERM -->
+		<div id="planning-titel" hidden>
+			<h2 class="jumbotron text-center">Jouw planning</h2>
+		</div>
+		<! -- DIT IS HET OEFENING REGISTRATIE SCHERM -->
+			<div id="oefeningRegistratieScherm" hidden>
+				<form>
+					<div class="jumbotron font-weight-bold text-center">
+						<h2> Wat heb je voor training gedaan? </h2>
+					</div>
+					<div class="font-italic text-center">
+						<label>Oefening: </label> <br>
+						<input type=text id=ipoefening>
+					</div>
+					<div class="font-italic text-center">
+						<label>Oefeningstijd: </label> <br>
+						<input type=number id=ipoefeningtijd>
+					</div>
+					<div class="font-italic text-center">
+						<label>Aantal reps: </label> <br>
+						<input type=number id=ipliftaantal>
+					</div>
+					<div class="font-italic text-center">
+						<label>Gewicht: </label> <br>
+						<input type=text id=ipgewicht> 
+					</div>
+					<div class="font-italic text-center">
+						<label>Starttijd: </label> <br>
+						<input type=datetime-local id=ipstarttijd>
+					</div>
+					
+					<p align="center">
+						<br><input type="button" class="btn btn-outline-primary" value="Voeg Toe" onclick="slaOefeningOp()">
+					</p>
+				</form>
+			</div>
+			<! -- DIT IS HET VRAGENLIJST SCHERM -->
+				<div id="vragenlijstScherm" hidden>
+					<form>
+						<div class="jumbotron font-weight-bold text-center">
+							<h2>Korte vragenlijst!</h2>
+						</div>
+						<div id="vraag" class="font-italic text-center">Hier komt de vraag!</div><br>
+						<p align="center">
+							<input type="radio" id="antwoord-goed" name="antwoord" value="goed">
+							<label for="goed">Goed</label><br>
+							<input type="radio" id="antwoord-matig" name="antwoord" value="matig">
+							<label for="matig">Matig</label><br>
+							<input type="radio" id="antwoord-slecht" name="antwoord" value="slecht">
+							<label for="slecht">Slecht</label><br>
+							<input type=button id="verstuurAntwoord" value="Verstuur antwoord" onclick="slaAntwoordOp()">
+						</p>
+					</form>
+					<div id="allevragenlijsten" hidden>
+						<br><br>
+						<div id="uitleg id" class="font-italic">Geef het ID op van de training waar je antwoord op wil geven.</div>
+						<input type=text id="voortgangID"><input type=button class="btn btn-outline-primary" value="Laat hele voortgangtabel zien"
+							onclick="toonVoortgangVragenlijst()">
+						<div id="tabelDiv"></div>
+						<input type=button class="btn btn-outline-primary" value="voeg toe" onclick="verkrijgAlleVragenlijsten()">
+						<div id=output></div>
+					</div>
+				</div>
+			<! -- DIT IS VOOR HET VOORTGANG SCHERM -->
+			<div id ="voortgangscherm-titel" hidden>
+				<div class="jumbotron font-weight-bold text-center">
+					<h2> Jouw voortgang </h2>
+				</div>
+			</div>
+				<div id="voortgangscherm" hidden>
+					<div class="font-italic">
+						<br> <label>ID</label>
+						<input type=text id=ipID disabled>
+						<input type="checkbox" id="checkbox" onclick="verwijderModus()">
+						<small class="form-text text-muted">Vul ID in voor verwijdering</small> <br>
+						<input type="button" class="btn btn-outline-primary" value="Delete Voortgang" onclick="verwijderOefening()">
+					</div>
+				</div>
+
+				<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+					integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+					crossorigin="anonymous"></script>
+				<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+					integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+					crossorigin="anonymous"></script>
+				<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
+					integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
+					crossorigin="anonymous"></script>
+</body>
+
+</html>

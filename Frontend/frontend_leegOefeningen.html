@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+    <script>
+     function leegDeOefeningen(){
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function(){
+                if(this.readyState == 4){
+                    console.log("jeej het knopje werkt!");
+                }
+            };
+            xhr.open("POST","http://localhost:8082/leegOefeningen",true);
+            xhr.send();
+        }
+        function vulDeOefeningen(){
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function(){
+                if(this.readyState == 4){
+                    console.log("jeej het knopje2 werkt!");
+                }
+            };
+            xhr.open("POST","http://localhost:8082/vulAlleOefeningen",true);
+            xhr.send();
+        }
+    </script>
+
+    <body>
+        Dit ding is maar tijdelijk.<br>
+        <input type="button" value="leeg de oefeningen" onclick="leegDeOefeningen()">
+        <input type="button" value="vul de oefeningen" onclick="vulDeOefeningen()"
+    </body>
+</html>

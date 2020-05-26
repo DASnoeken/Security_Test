@@ -1,0 +1,15 @@
+
+<label>Oefening</label>
+<select (change) = setOefening($event)>
+    <option *ngFor="let x of oefeningen" [value] = "x.id">{{x.naam}}</option>    
+</select>
+
+<br>
+<label>Datum</label>
+<input type="datetime-local" (change)="setTijd($event)"> <br>
+<label>Aantal Reps</label>
+<input type="number" (change)="setAantalReps($event)"><br>
+<label>Gewicht</label>
+<input type="number" (change) = "setGewicht($event)"><br>
+<input type="button" value = "Sla de traing op" (click) = "saveTraining()">;
+

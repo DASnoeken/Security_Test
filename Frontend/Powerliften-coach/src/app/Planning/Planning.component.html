@@ -1,0 +1,56 @@
+
+
+<div id="sporterScherm" >
+    <label>Sporter </label>
+    <select (change)="setSporter($event)">
+        <option  *ngFor="let x of sporters" value={{x.id}}>{{x.naam}}</option>
+
+    </select><br>
+    <input type="button" value="Voeg Sporter toe" (click)="maakPlanningSporter()">
+</div>
+
+<div id="trainingScherm" hidden>
+    <label>Oefening</label>
+    <select (change)=setOefening($event)>
+        <option *ngFor="let x of oefeningen" value={{x.naam}}>{{x.naam}}</option>
+    </select>
+    <br>
+    <label>Datum</label>
+    <input type="datetime-local" (change)="setTijd($event)"> <br>
+    <label>Aantal Reps</label>
+    <input type="number" (change)="setAantalReps($event)"><br>
+    <label>Gewicht</label>
+    <input type="number" (change)="setGewicht($event)"><br>
+    <input type="button" value="Voeg training toe" (click)="saveTraining()">
+    <input type="button" value="Verwijder training" (click)="verwijderTraining()">
+    <input type="button" value="Sla de planning op" (click)="slaPlanningOp()">
+    <input type="button" value="Maak Planning voor andere sporter" (click) = "maakPlanning()">
+</div>
+<div id="verwijderScherm" hidden>
+    <input type=number [(ngModel)]=verwijderID>
+    <input type="button" (click) = "verwijderTrainingByID()" value="verwijder Oefening">
+    <input type="button" (click) = "maakPlanningSporter()" value="Ga terug"> 
+</div>
+<div id="trainingenBekijken" hidden>
+    <table class="table">
+        <thead class="thead-dark">
+            <tr>
+                <th scope="col">Tijd</th>
+                <th scope="col">Oefening</th>
+                <th scope="col">Aantal Reps </th>
+                <th scope="col">Gewicht</th>
+            </tr>
+        </thead>
+        <tbody *ngFor = "let x of trainingen">
+            <tr>
+                <td>{{x.tijd}}</td>
+                <td>{{x.oefening.naam}}</td>
+                <td>{{x.aantalReps}}</td>
+                <td>{{x.gewicht}}</td>
+            </tr>
+        </tbody>
+    </table>
+
+
+
+</div>
