@@ -2,7 +2,6 @@ package PowerLifters.PowerLiften.api;
 
 import java.util.List;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 /*import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -11,7 +10,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-
 import org.springframework.web.bind.annotation.RestController;
 
 import PowerLifters.PowerLiften.controller.CoachService;
@@ -19,7 +17,6 @@ import PowerLifters.PowerLiften.controller.GegevenTrainingService;
 import PowerLifters.PowerLiften.controller.GeregistreerdeSporterService;
 import PowerLifters.PowerLiften.controller.PlanningService;
 import PowerLifters.PowerLiften.domein.GegevenTraining;
-import PowerLifters.PowerLiften.domein.GeregistreerdeSporter;
 import PowerLifters.PowerLiften.domein.Planning;
 
 
