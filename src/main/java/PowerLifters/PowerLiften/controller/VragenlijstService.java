@@ -3,13 +3,10 @@ package PowerLifters.PowerLiften.controller;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import PowerLifters.PowerLiften.domein.GeregistreerdeSporter;
-import PowerLifters.PowerLiften.domein.Oefening;
-import PowerLifters.PowerLiften.domein.Voortgang;
 import PowerLifters.PowerLiften.domein.Vragenlijst;
 
 @Service
