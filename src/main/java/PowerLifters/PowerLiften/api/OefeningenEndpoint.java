@@ -1,6 +1,7 @@
 package PowerLifters.PowerLiften.api;
 
 import java.io.IOException;
+import org.springframework.beans.factory.annotation.Value;
 import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -22,8 +23,11 @@ public class OefeningenEndpoint {
 	@Autowired
 	OefeningenService os;
 	
+	@Value("${hoi.test}")
+	String check;
 	@GetMapping("/allOefeningen")
 	public Iterable<Oefening> getAllOefening() {
+		System.out.println(check);
 		Iterable<Oefening> oefeningen = os.vindOefening();
 		return oefeningen; 
 	}
