@@ -10,9 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import PowerLifters.PowerLiften.controller.VragenlijstService;
-import PowerLifters.PowerLiften.domein.Oefening;
 import PowerLifters.PowerLiften.domein.Vragenlijst;
-import io.swagger.annotations.ApiOperation;
 
 @RestController
 public class VragenlijstEndpoint {
@@ -21,14 +19,14 @@ public class VragenlijstEndpoint {
 	VragenlijstService vs;
 	
 	@GetMapping("/vulVragenlijst")
-	@ApiOperation(value = "Unused?")
+//	@ApiOperation(value = "Unused?")
 	public Vragenlijst getAllVragen() {
 		Vragenlijst vr = new Vragenlijst();
 		return vr; 
 	}
 	
 	@GetMapping("/verkrijgVragenlijst")
-	@ApiOperation(value = "Vind alle vragenlijsten")
+//	@ApiOperation(value = "Vind alle vragenlijsten")
 	public Iterable<Vragenlijst> getAllVragenlijsten()
 	{
 		Iterable<Vragenlijst> vragenlijsten = vs.getAllVragenlijsten();
@@ -36,14 +34,14 @@ public class VragenlijstEndpoint {
 	}
 	
 	@GetMapping("/getVragenlijstByID/{id}")
-	@ApiOperation(value = "Vind vragenlijst met een bepaald id")
+//	@ApiOperation(value = "Vind vragenlijst met een bepaald id")
 	public Optional<Vragenlijst> getVragenlijstById(@PathVariable long id){
 		Optional<Vragenlijst> antwoord = vs.getVragenlijstById(id);
 		return antwoord;
 	}
 	
 	@PostMapping("/save/antwoord/{id}")
-	@ApiOperation(value = "Slaat het gegeven antwoord & id op")
+//	@ApiOperation(value = "Slaat het gegeven antwoord & id op")
 	public void slaAntwoordOp(@RequestBody Vragenlijst vragenlijst, @PathVariable long id) {
 		System.out.println("Antwoord: " + vragenlijst.getAntwoorden() + " is opgeslagen!");
 		vs.opslaanAntwoorden(vragenlijst, id);
